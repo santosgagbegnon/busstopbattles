@@ -19,7 +19,5 @@ public class GameActivity extends AppCompatActivity {
                 startActivity( new Intent(GameActivity.this,HomeActivity.class));
             }
         });
-
-
     }
 }
