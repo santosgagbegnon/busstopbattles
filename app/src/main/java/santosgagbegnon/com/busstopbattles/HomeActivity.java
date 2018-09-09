@@ -24,14 +24,18 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         if(isServicesOK()){
-            Button playButton = findViewById(R.id.playButton);
-            playButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(HomeActivity.this, SearchingActivity.class));
-                }
-            });
+            init();
         }
+    }
+
+    private void init(){
+        Button playButton = findViewById(R.id.playButton);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this, SearchingActivity.class));
+            }
+        });
     }
 
     public boolean isServicesOK(){
