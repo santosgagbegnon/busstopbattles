@@ -12,8 +12,6 @@ import android.widget.TextView;
 
 
 public class UsernameSetupActivity extends AppCompatActivity {
-    private UsernameSetupActivityModel usernameSetupActivityModel = new UsernameSetupActivityModel(this);
-    private static final String TAG = "HomeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
