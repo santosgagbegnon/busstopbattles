@@ -3,31 +3,76 @@ package santosgagbegnon.com.busstopbattles;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
 
 import static android.content.ContentValues.TAG;
 
 public class HomeActivityModel extends AppCompatActivity{
-
     //Check that user has correct version of Google Play Services
     private static final String TAG = "HomeActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
+    private static final int LocationPermission_RequestCode = 9853;
     private HomeActivity homeActivity;
     private Boolean LocationPermissionGranted = false;
-    private static final int LocationPermission_RequestCode = 9853;
+    private FusedLocationProviderClient FusedLocationProviderClient;
+    private Location currentLocation;
 
 
     public HomeActivityModel(HomeActivity homeActivity){
         this.homeActivity = homeActivity;
     }
+
+    public void homeActivitySetup(){
+        getLocationPermission();
+        getDeviceLocation();
+    }
+
+
+    private void getDeviceLocation(){
+        Log.d(TAG, "getDeviceLocation: Getting Devices Current Location...");
+        FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(homeActivity);
+        try {
+            if (LocationPermissionGranted) {
+                FusedLocationProviderClient.getLastLocation().addOnSuccessListener(homeActivity, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            currentLocation = location;
+                            Log.d(TAG, "onComplete: USER LOCATION: " + currentLocation.toString());
+                            Toast.makeText(homeActivity, currentLocation.toString(), Toast.LENGTH_SHORT).show();
+
+                        }
+                        else{
+                            Log.d(TAG, "onComplete: Current location is null");
+                            Toast.makeText(homeActivity, "Unable to get current location", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }
+        catch (SecurityException e){
+            Log.d(TAG, "getDeviceLocation: Security Exception " + e.getMessage());
+        }
+    }
+
+    public Location giveCurrentLocation(){
+        return currentLocation;
+    }
+
 
     public boolean isServicesOK(){
         Log.d(TAG, "isServicesOK: Checking Google Services Version");
@@ -49,7 +94,7 @@ public class HomeActivityModel extends AppCompatActivity{
         return false;
     }
 
-    public void getLocationPermission(){
+    private void getLocationPermission(){
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
 
         if(ContextCompat.checkSelfPermission(homeActivity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -62,7 +107,7 @@ public class HomeActivityModel extends AppCompatActivity{
         }
     }
 
-    @Override
+    @Override // Keep as public because it is a Super class function
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         LocationPermissionGranted = false;
 
