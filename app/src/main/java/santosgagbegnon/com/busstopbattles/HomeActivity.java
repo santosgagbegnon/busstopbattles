@@ -1,13 +1,13 @@
 package santosgagbegnon.com.busstopbattles;
 
-import android.app.Dialog;
+//import android.app.Dialog; unused
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log; unused
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+//import android.widget.Toast; unused
 
 import com.google.android.gms.common.GoogleApiAvailability; //Needed to import for GoogleApiAvailability
 import com.google.android.gms.common.ConnectionResult;
@@ -20,7 +20,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         HomeActivityModel homeActivityModel = new HomeActivityModel(this);
         if(homeActivityModel.isServicesOK()){
-            homeActivityModel.getLocationPermission();
+            homeActivityModel.homeActivitySetup();
             init();
         }
     }
