@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "743985586090",
+    "firebase_url": "https://busstopbattles.firebaseio.com",
+    "project_id": "busstopbattles",
+    "storage_bucket": "busstopbattles.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743985586090:android:9e298259deb5aad8",
+        "android_client_info": {
+          "package_name": "santosgagbegnon.com.busstopbattles"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "743985586090-ea5bppmoaj05mi0k40oou6o1rp4gkf38.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "santosgagbegnon.com.busstopbattles",
+            "certificate_hash": "66d68e25e2b4e199409b06c809d50aedd0279e44"
+          }
+        },
+        {
+          "client_id": "743985586090-jiendjbipsqrp6ghoq2t2l77s7p9ffgm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZqdMt02xd0GKElnnterlCGxYDWZFwm8w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "743985586090-jiendjbipsqrp6ghoq2t2l77s7p9ffgm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
