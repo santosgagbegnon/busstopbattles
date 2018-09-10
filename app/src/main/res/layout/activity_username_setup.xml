@@ -7,7 +7,7 @@
     tools:context=".UsernameSetupActivity">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/usernameTextField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -27,7 +27,24 @@
         android:id="@+id/signupButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="356dp"
         android:text="Sign up!"
-        tools:layout_editor_absoluteX="147dp"
-        tools:layout_editor_absoluteY="451dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/usernameTakenTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="Username already taken."
+        android:textColor="@android:color/holo_red_light"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="312dp" />
 </android.support.constraint.ConstraintLayout>
