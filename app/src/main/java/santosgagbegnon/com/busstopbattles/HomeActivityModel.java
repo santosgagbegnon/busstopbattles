@@ -2,14 +2,19 @@ package santosgagbegnon.com.busstopbattles;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.bluetooth.BluetoothClass;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -18,6 +23,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Locale;
 
 import static android.content.ContentValues.TAG;
 
@@ -30,19 +40,72 @@ public class HomeActivityModel extends AppCompatActivity{
     private Boolean LocationPermissionGranted = false;
     private FusedLocationProviderClient FusedLocationProviderClient;
     private Location currentLocation;
+    private String address;
+    private double latitude_coord;
+    private double longitude_coord;
 
 
-    public HomeActivityModel(HomeActivity homeActivity){
-        this.homeActivity = homeActivity;
+    public HomeActivityModel(HomeActivity homeActivity){ this.homeActivity = homeActivity;
     }
 
     public void homeActivitySetup(){
         getLocationPermission();
-        getDeviceLocation();
+        getDeviceLocation(new DeviceLocationSuccessfullyRecieved(){
+            @Override
+            public void getLatitudeandLongitude() {
+                try{
+                    latitude_coord = currentLocation.getLatitude();
+                    longitude_coord = currentLocation.getLongitude();
+                    Log.d(TAG, "getLatitudeandLongitude: longitude coordinate " + longitude_coord);
+                }
+                catch (IllegalArgumentException e){
+                    e.printStackTrace();
+                    //Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        //getLatitudeandLongitude();
+        getAddress(latitude_coord, longitude_coord); // This line breaks it because location is null, but I believe it is emulation problem.
+        updateHomeActivityText(address);
+    }
+
+    private void updateHomeActivityText(CharSequence homeMessage){
+        TextView activity_home_message = findViewById(R.id.activity_home_message);
+        activity_home_message.setText(homeMessage);
     }
 
 
-    private void getDeviceLocation(){
+
+    /*private void getLatitudeandLongitude(){
+        try{
+            latitude_coord = giveCurrentLocation().getLatitude();
+            longitude_coord = giveCurrentLocation().getLongitude();
+        }
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
+            Toast.makeText(this,e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    */
+
+    //Problem HERE WITH ADDRESS obj!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    private void getAddress(double latitude, double longitude){
+        Geocoder geocoder = new Geocoder(homeActivity, Locale.getDefault() );
+        try{
+            Log.d(TAG, "getAddress: Longitude " + longitude_coord);
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            Address obj = addresses.get(0);
+            address = "";
+            address += obj.getAddressLine(0);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void getDeviceLocation(final DeviceLocationSuccessfullyRecieved DLSR){
         Log.d(TAG, "getDeviceLocation: Getting Devices Current Location...");
         FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(homeActivity);
         try {
@@ -52,9 +115,9 @@ public class HomeActivityModel extends AppCompatActivity{
                     public void onSuccess(Location location) {
                         if (location != null) {
                             currentLocation = location;
-                            Log.d(TAG, "onComplete: USER LOCATION: " + currentLocation.toString());
+                            Log.d(TAG, "onComplete: !!!!USER LOCATION: " + currentLocation.toString());
                             Toast.makeText(homeActivity, currentLocation.toString(), Toast.LENGTH_SHORT).show();
-
+                            DLSR.getLatitudeandLongitude();
                         }
                         else{
                             Log.d(TAG, "onComplete: Current location is null");
@@ -68,6 +131,7 @@ public class HomeActivityModel extends AppCompatActivity{
             Log.d(TAG, "getDeviceLocation: Security Exception " + e.getMessage());
         }
     }
+
 
     public Location giveCurrentLocation(){
         return currentLocation;
