@@ -1,15 +1,22 @@
 package santosgagbegnon.com.busstopbattles;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.bluetooth.BluetoothClass;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -18,6 +25,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Locale;
 
 import static android.content.ContentValues.TAG;
 
@@ -30,15 +42,59 @@ public class HomeActivityModel extends AppCompatActivity{
     private Boolean LocationPermissionGranted = false;
     private FusedLocationProviderClient FusedLocationProviderClient;
     private Location currentLocation;
+    private String address;
+    private double latitude_coord;
+    private double longitude_coord;
+    private Context homeActivityContext;
 
 
-    public HomeActivityModel(HomeActivity homeActivity){
+    public HomeActivityModel(HomeActivity homeActivity, Context context){
         this.homeActivity = homeActivity;
+        this.homeActivityContext = context;
     }
 
     public void homeActivitySetup(){
         getLocationPermission();
         getDeviceLocation();
+    }
+
+    //Interface/method part that used to be inside getDeviceLocation method call
+    /* new DeviceLocationSuccessfullyRecieved(){
+            @Override
+            public void getLatitudeandLongitude() {
+                try{
+                    latitude_coord = currentLocation.getLatitude();
+                    longitude_coord = currentLocation.getLongitude();
+                }
+                catch (IllegalArgumentException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        */
+
+
+
+    private void updateHomeActivityText(CharSequence homeMessage){
+        TextView activity_home_message = ((Activity)homeActivityContext).findViewById(R.id.activity_home_message);
+        activity_home_message.setText(homeMessage);
+    }
+
+    private void getAddress(double latitude, double longitude){
+        Geocoder geocoder = new Geocoder(homeActivity, Locale.getDefault() );
+        try{
+            Log.d(TAG, "getAddress: Longitude " + longitude_coord);
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            Address obj = addresses.get(0);
+            address = "";
+            address += obj.getAddressLine(0);
+            Log.d(TAG, "getAddress: ADDRESS!!!! " + address);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -52,9 +108,13 @@ public class HomeActivityModel extends AppCompatActivity{
                     public void onSuccess(Location location) {
                         if (location != null) {
                             currentLocation = location;
-                            Log.d(TAG, "onComplete: USER LOCATION: " + currentLocation.toString());
-                            Toast.makeText(homeActivity, currentLocation.toString(), Toast.LENGTH_SHORT).show();
-
+                            Log.d(TAG, "onComplete: !!!!USER LOCATION: " + currentLocation.toString());
+                            double longitude = currentLocation.getLongitude();
+                            double latitude = currentLocation.getLatitude();
+                            getAddress(latitude, longitude);
+                            //Toast.makeText(homeActivity, currentLocation.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(homeActivity, address, Toast.LENGTH_SHORT).show();
+                            updateHomeActivityText(address);
                         }
                         else{
                             Log.d(TAG, "onComplete: Current location is null");
@@ -68,6 +128,7 @@ public class HomeActivityModel extends AppCompatActivity{
             Log.d(TAG, "getDeviceLocation: Security Exception " + e.getMessage());
         }
     }
+
 
     public Location giveCurrentLocation(){
         return currentLocation;
