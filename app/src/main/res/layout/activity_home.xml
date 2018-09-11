@@ -7,7 +7,8 @@
     tools:context=".HomeActivity">
 
     <TextView
-        android:id="@+id/messageTextView"
+
+        android:id="@+id/activity_home_message"
         android:layout_width="229dp"
         android:layout_height="92dp"
         android:layout_marginBottom="8dp"

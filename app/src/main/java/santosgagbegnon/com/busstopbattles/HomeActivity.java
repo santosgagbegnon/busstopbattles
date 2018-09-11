@@ -1,6 +1,7 @@
 package santosgagbegnon.com.busstopbattles;
 
 //import android.app.Dialog; unused
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -25,12 +26,13 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        messageTextView = findViewById(R.id.messageTextView);
+        messageTextView = findViewById(R.id.activity_home_message);
         if(homeActivityModel.isServicesOK()){
             homeActivityModel.homeActivitySetup();
             init();
         }
     }
+
 
     private void init(){
         playButton = findViewById(R.id.playButton);
