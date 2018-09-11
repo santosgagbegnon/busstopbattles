@@ -20,7 +20,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        HomeActivityModel homeActivityModel = new HomeActivityModel(this);
+        HomeActivityModel homeActivityModel = new HomeActivityModel(this, this);
         if(homeActivityModel.isServicesOK()){
             homeActivityModel.homeActivitySetup();
             init();

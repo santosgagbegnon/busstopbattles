@@ -1,8 +1,10 @@
 package santosgagbegnon.com.busstopbattles;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.bluetooth.BluetoothClass;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -43,53 +45,42 @@ public class HomeActivityModel extends AppCompatActivity{
     private String address;
     private double latitude_coord;
     private double longitude_coord;
+    private Context homeActivityContext;
 
 
-    public HomeActivityModel(HomeActivity homeActivity){ this.homeActivity = homeActivity;
+    public HomeActivityModel(HomeActivity homeActivity, Context context){
+        this.homeActivity = homeActivity;
+        this.homeActivityContext = context;
     }
 
     public void homeActivitySetup(){
         getLocationPermission();
-        getDeviceLocation(new DeviceLocationSuccessfullyRecieved(){
+        getDeviceLocation();
+    }
+
+    //Interface/method part that used to be inside getDeviceLocation method call
+    /* new DeviceLocationSuccessfullyRecieved(){
             @Override
             public void getLatitudeandLongitude() {
                 try{
                     latitude_coord = currentLocation.getLatitude();
                     longitude_coord = currentLocation.getLongitude();
-                    Log.d(TAG, "getLatitudeandLongitude: longitude coordinate " + longitude_coord);
                 }
                 catch (IllegalArgumentException e){
                     e.printStackTrace();
-                    //Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        }
 
-        //getLatitudeandLongitude();
-        getAddress(latitude_coord, longitude_coord); // This line breaks it because location is null, but I believe it is emulation problem.
-        updateHomeActivityText(address);
-    }
+        */
+
+
 
     private void updateHomeActivityText(CharSequence homeMessage){
-        TextView activity_home_message = findViewById(R.id.activity_home_message);
+        TextView activity_home_message = ((Activity)homeActivityContext).findViewById(R.id.activity_home_message);
         activity_home_message.setText(homeMessage);
     }
 
-
-
-    /*private void getLatitudeandLongitude(){
-        try{
-            latitude_coord = giveCurrentLocation().getLatitude();
-            longitude_coord = giveCurrentLocation().getLongitude();
-        }
-        catch (IllegalArgumentException e){
-            e.printStackTrace();
-            Toast.makeText(this,e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-    */
-
-    //Problem HERE WITH ADDRESS obj!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private void getAddress(double latitude, double longitude){
         Geocoder geocoder = new Geocoder(homeActivity, Locale.getDefault() );
         try{
@@ -98,6 +89,7 @@ public class HomeActivityModel extends AppCompatActivity{
             Address obj = addresses.get(0);
             address = "";
             address += obj.getAddressLine(0);
+            Log.d(TAG, "getAddress: ADDRESS!!!! " + address);
         }
         catch (IOException e){
             e.printStackTrace();
@@ -105,7 +97,8 @@ public class HomeActivityModel extends AppCompatActivity{
         }
     }
 
-    private void getDeviceLocation(final DeviceLocationSuccessfullyRecieved DLSR){
+
+    private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: Getting Devices Current Location...");
         FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(homeActivity);
         try {
@@ -116,8 +109,12 @@ public class HomeActivityModel extends AppCompatActivity{
                         if (location != null) {
                             currentLocation = location;
                             Log.d(TAG, "onComplete: !!!!USER LOCATION: " + currentLocation.toString());
-                            Toast.makeText(homeActivity, currentLocation.toString(), Toast.LENGTH_SHORT).show();
-                            DLSR.getLatitudeandLongitude();
+                            double longitude = currentLocation.getLongitude();
+                            double latitude = currentLocation.getLatitude();
+                            getAddress(latitude, longitude);
+                            //Toast.makeText(homeActivity, currentLocation.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(homeActivity, address, Toast.LENGTH_SHORT).show();
+                            updateHomeActivityText(address);
                         }
                         else{
                             Log.d(TAG, "onComplete: Current location is null");
